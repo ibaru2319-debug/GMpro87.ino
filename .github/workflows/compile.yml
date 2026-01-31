@@ -1,26 +1,36 @@
-name: Compile ESP8266 GMpro87
+name: Build ESP8266 SDK 2.0.0
 
 on: [push, pull_request]
 
 jobs:
-  build:
+  compile:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Setup Arduino CLI
         uses: arduino/setup-arduino-cli@v1
 
-      - name: Install ESP8266 Platform (SDK 2.0.0)
+      - name: Install ESP8266 Core v2.0.0
         run: |
           arduino-cli config init
           arduino-cli config add board_manager.additional_urls http://arduino.esp8266.com/stable/package_esp8266com_index.json
           arduino-cli core update-index
-          # Menginstall versi 2.0.0 secara spesifik
           arduino-cli core install esp8266:esp8266@2.0.0
 
-      - name: Compile GMpro87
+      - name: Compile Sketch
         run: |
-          arduino-cli compile --fqbn esp8266:esp8266:nodemcuv2 GMpro87/GMpro87.ino
+          # Mencari folder yang berisi file .ino secara otomatis
+          SKETCH_PATH=$(find . -name "*.ino" -print -quit | xargs dirname)
+          echo "Menemukan sketsa di: $SKETCH_PATH"
+          
+          # Proses Compile
+          arduino-cli compile --fqbn esp8266:esp8266:d1_mini --output-dir ./build "$SKETCH_PATH"
+
+      - name: Upload Binary Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Firmware-WemosD1Mini-SDK200
+          path: ./build/*.bin
