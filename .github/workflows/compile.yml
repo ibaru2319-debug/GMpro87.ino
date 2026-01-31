@@ -21,6 +21,6 @@ jobs:
           # Menginstall versi 2.0.0 secara spesifik
           arduino-cli core install esp8266:esp8266@2.0.0
 
-      - name: Compile Sketch
+      - name: Compile GMpro87
         run: |
-          arduino-cli compile --fqbn esp8266:esp8266:nodemcuv2 Sketch/Sketch.ino
+          arduino-cli compile --fqbn esp8266:esp8266:nodemcuv2 GMpro87/GMpro87.ino
