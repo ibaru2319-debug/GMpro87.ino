@@ -22,18 +22,20 @@ jobs:
 
       - name: Compile Sketch
         run: |
-          # Otomatis cari folder yang ada file .ino
-          SKETCH_PATH=$(find . -name "*.ino" -print -quit | xargs dirname)
-          echo "Menemukan sketsa di: $SKETCH_PATH"
+          # Mencari file .ino pertama yang ditemukan
+          INO_FILE=$(find . -name "*.ino" | head -n 1)
+          SKETCH_PATH=$(dirname "$INO_FILE")
           
-          # Buat folder build jika belum ada
+          echo "Menemukan file: $INO_FILE"
+          echo "Menjalankan compile di folder: $SKETCH_PATH"
+          
           mkdir -p ./build
           
-          # Proses Compile untuk Wemos D1 Mini
+          # Compile menggunakan folder tempat file .ino berada
           arduino-cli compile --fqbn esp8266:esp8266:d1_mini --output-dir ./build "$SKETCH_PATH"
 
       - name: Upload Binary Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Firmware-WemosD1Mini-SDK200
+          name: Firmware-GMpro87
           path: ./build/*.bin
