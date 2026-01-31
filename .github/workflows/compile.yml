@@ -8,7 +8,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Arduino CLI
         uses: arduino/setup-arduino-cli@v1
@@ -22,15 +22,18 @@ jobs:
 
       - name: Compile Sketch
         run: |
-          # Mencari folder yang berisi file .ino secara otomatis
+          # Otomatis cari folder yang ada file .ino
           SKETCH_PATH=$(find . -name "*.ino" -print -quit | xargs dirname)
           echo "Menemukan sketsa di: $SKETCH_PATH"
           
-          # Proses Compile
+          # Buat folder build jika belum ada
+          mkdir -p ./build
+          
+          # Proses Compile untuk Wemos D1 Mini
           arduino-cli compile --fqbn esp8266:esp8266:d1_mini --output-dir ./build "$SKETCH_PATH"
 
       - name: Upload Binary Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Firmware-WemosD1Mini-SDK200
           path: ./build/*.bin
